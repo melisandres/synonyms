@@ -25,7 +25,7 @@ export default class extends AbstractView{
         const data = await this.fetchDataFromServer(word);
         let string =    `
                         <h1><a href="/word/${word}" data-link>${word}</a></h1>
-                        <h2>example sentences:</h2>
+                        <h2>example sentences:</h2><ul>
                         `;
 
         const content = await this.buildString(data, string);
@@ -35,8 +35,35 @@ export default class extends AbstractView{
     
         return content;
     }
+    
 
-    async buildString(obj, content = '') {
+
+async buildString(obj, content = '') {
+    // Check if the input is an array
+    if (Array.isArray(obj)) {
+        // Use a for...of loop to wait for each asynchronous call inside the loop
+        for (const item of obj) {
+            content += await this.buildString(item);
+        }
+    } else if (typeof obj === 'object' && obj !== null) {
+        // Use a for...of loop to wait for each asynchronous call inside the loop
+        for (const key of Object.keys(obj)) {
+            if (key === 't') {
+                // Replace {it} and {/it} with <i> and </i>
+                let text = obj[key].replace(/\{it\}/g, '<i>').replace(/\{\/it\}/g, '</i>');
+                // Handle {wi} and {/wi}
+                text = text.replace(/\{wi\}/g, '<strong>').replace(/\{\/wi\}/g, '</strong>');
+                content += `<li class="sentence">${text}</li>`;
+            } else {
+                // Recursively call the function for non-'t' keys
+                content += await this.buildString(obj[key]);
+            }
+        }
+    }
+    return content;
+}
+
+    /* async buildString(obj, content = '') {
         // Check if the input is an array
         if (Array.isArray(obj)) {
             // Use Promise.all to wait for all asynchronous calls inside the loop
@@ -52,7 +79,7 @@ export default class extends AbstractView{
                         let text = obj[key].replace(/\{it\}/g, '<i>').replace(/\{\/it\}/g, '</i>');
                         // Handle {wi} and {/wi}
                         text = text.replace(/\{wi\}/g, '<strong>').replace(/\{\/wi\}/g, '</strong>');
-                        return `<li>${text}</li>`;
+                        return `<li class="sentence">${text}</li>`;
                     } else {
                         // Recursively call the function for non-'t' keys
                         return await this.buildString(obj[key]);
@@ -62,9 +89,9 @@ export default class extends AbstractView{
             // Concatenate the results
             content += results.join('');
         }
-    
+        content += `</ul>`;
         return content;
-    }
+    } */
     
     
 }

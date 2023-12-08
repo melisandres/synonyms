@@ -28,7 +28,7 @@ export default class extends AbstractView{
 
          // Check if the data is synonyms
          if (!data[0].meta){
-            content += `<h2>words that remind us of "${word}"</h2>`; 
+            content += `<h2>words that remind us of "${word}"</h2><ul>`; 
         }
 
         // Iterate through the data
@@ -39,7 +39,7 @@ export default class extends AbstractView{
                 content += `<h2>Synonym for "${element.hwi.hw}"</h2>`;
                 element.meta.syns.forEach((synonymArray, index) => {
                     // Iterate through each synonym in the array
-                    content += `<h3>Set ${index + 1}:</h3><ul class="syn-group">`;
+                    content += `<ul class="syn-group">`;
                     synonymArray.forEach(synonym => {
                         // Extract and display each synonym
                         content += `<li><a href="/sentence/${synonym}" data-link>${synonym}</a></li>`;
